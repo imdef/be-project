@@ -1,5 +1,6 @@
 import sys
 import cv2
+import os
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
@@ -10,7 +11,7 @@ import tensorflow as tf
 import time
 
 #model load
-model = tf.keras.models.load_model('main/model1.h5')
+model = tf.keras.models.load_model('model.h5')
 
 #labels load
 labels = []
@@ -59,16 +60,29 @@ class MainWindow(QMainWindow):
 
         camera_indexes = sorted(camera_indexes, reverse=True)
         print("List of available cameras:", camera_indexes)
+        
+        if not os.path.isfile("bg.jpg"):
+            cap = cv2.VideoCapture(camera_indexes[0])
+            ret, frame = cap.read()
+            if ret:
+                cv2.imwrite("bg.jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+                cap.release()
+            else:
+                print("Initialization Error")
+                sys.exit(1)
+
         self.capture = cv2.VideoCapture(camera_indexes[0])
+        
+        self.greyBackground = cv2.resize(cv2.imread("bg.jpg"), (128, 128))
+        self.greyBackground = cv2.cvtColor(self.greyBackground, cv2.COLOR_BGR2GRAY) #bg.jpg has to be already present, add check for that in here and in handle_button
+        
         
         # Start the timer to update the video
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(200) # 5ms
         
-        self.greyBackground = cv2.resize(cv2.imread("bg.jpg"), (128, 128))
-        self.greyBackground = cv2.cvtColor(self.greyBackground, cv2.COLOR_BGR2GRAY) #bg.jpg has to be already present, add check for that in here and in handle_button
-
+        
     def keyPressEvent(self, event):
         if (event.key() == Qt.Key_R and self.button1.isChecked()):
             
@@ -113,6 +127,7 @@ class MainWindow(QMainWindow):
             
             dframe = cv2.absdiff(self.greyBackground, greyFrame)
 
+            # Realtime Hyperparameter
             _, mask = cv2.threshold(dframe, 50, 255, cv2.THRESH_BINARY)
             
             foreground = cv2.bitwise_and(frame, frame, mask=mask)
