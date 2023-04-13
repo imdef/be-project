@@ -11,9 +11,9 @@ python3 classify.py
 
 ### Usage
 1. Setup background.
-  a. To setup a background. Click the "Background" button.
-  b. Press "s" to save the current frame / Or "r" to cycle through frames one by one.
+  - To setup a background. Click the "Background" button.
+  - Press "s" to save the current frame / Or "r" to cycle through frames one by one.
 
 2. Processing mode
-  a. In Processing mode, the program will automatically capture frames and classify the signs.
+  - In Processing mode, the program will automatically capture frames and classify the signs.
 
