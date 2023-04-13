@@ -10,7 +10,7 @@ python3 classify.py
 ```
 
 ### Usage
-1. Setup background.
+1. Setup background
   - To setup a background. Click the "Background" button.
   - Press "s" to save the current frame / Or "r" to cycle through frames one by one.
 
