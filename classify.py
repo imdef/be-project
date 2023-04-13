@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         
         self.label_mask = QLabel(self)
         self.label_mask.setGeometry(QtCore.QRect(525, 0, 500, 500))
+        
         # Create the first button
         self.button1 = QPushButton("Background", self)
         self.button1.setCheckable(True)
@@ -90,6 +91,7 @@ class MainWindow(QMainWindow):
             if ret:
                 # Convert the OpenCV image to a QImage
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+                self.frame = cv2.flip(self.frame, 1)               
                 image = QImage(self.frame, self.frame.shape[1], self.frame.shape[0], QImage.Format_RGB888)
 
                 # Show the QImage in the QLabel
@@ -100,8 +102,8 @@ class MainWindow(QMainWindow):
             self.button1.setChecked(False)
             self.button2.setChecked(True)            
             self.timer.start()
-            self.greyBackground = cv2.cvtColor(cv2.imread("bg.jpg"), cv2.COLOR_BGR2GRAY)
-            self.greyBackground = cv2.resize(self.greyBackground, (128, 128)) 
+            self.greyBackground = cv2.cvtColor(cv2.imread("bg.jpg"), cv2.COLOR_BGR2GRAY)            
+            self.greyBackground = cv2.resize(self.greyBackground, (128, 128))         
 
     def handle_button(self, butt):
         if butt == "button1":
@@ -111,11 +113,7 @@ class MainWindow(QMainWindow):
             self.button1.setChecked(False)
             self.timer.start()            
                     
-        
-    
-    
     def update(self):
-        
         ret, self.frame = self.capture.read()
         if ret:
             self.frame = cv2.flip(self.frame, 1)
@@ -139,7 +137,7 @@ class MainWindow(QMainWindow):
             # print(labels[np.argmax(pred, axis=-1)[0]])
             
             font = cv2.FONT_HERSHEY_SIMPLEX
-            text = "Symbol: " + labels[np.argmax(pred, axis=-1)[0]]
+            text = "Sign Label: " + labels[np.argmax(pred, axis=-1)[0]]
             text_scale = 0.7
             text_thickness = 1
             text_color = (0, 255, 0)
